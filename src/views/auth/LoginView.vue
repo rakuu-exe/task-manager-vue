@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import BaseAlert from '../../components/BaseAlert.vue'
@@ -13,6 +13,7 @@ const form = ref({
   password: '',
 })
 const backendErrors = ref<string[]>([])
+const displayedValidationErrors = ref<string[]>([])
 const isSubmitting = ref(false)
 
 const validationErrors = computed(() => {
@@ -28,9 +29,13 @@ const validationErrors = computed(() => {
 
 const handleSubmit = async (): Promise<void> => {
   backendErrors.value = []
+  displayedValidationErrors.value = validationErrors.value
+
   if (validationErrors.value.length > 0) {
     return
   }
+
+  displayedValidationErrors.value = []
 
   isSubmitting.value = true
 
@@ -50,6 +55,15 @@ const handleSubmit = async (): Promise<void> => {
     isSubmitting.value = false
   }
 }
+
+watch(
+  form,
+  () => {
+    backendErrors.value = []
+    displayedValidationErrors.value = []
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -66,8 +80,8 @@ const handleSubmit = async (): Promise<void> => {
       </header>
 
       <BaseAlert
-        v-if="validationErrors.length > 0"
-        :messages="validationErrors"
+        v-if="displayedValidationErrors.length > 0"
+        :messages="displayedValidationErrors"
         title="Validation errors"
       />
 

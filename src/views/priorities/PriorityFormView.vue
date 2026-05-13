@@ -25,6 +25,7 @@ const isPageLoading = ref(false)
 const isSubmitting = ref(false)
 const backendErrors = ref<string[]>([])
 const loadErrors = ref<string[]>([])
+const displayedValidationErrors = ref<string[]>([])
 
 const isEditMode = computed(() => props.mode === 'edit')
 const pageTitle = computed(() =>
@@ -49,6 +50,7 @@ const validationErrors = computed(() => {
 const loadPriority = async (): Promise<void> => {
   backendErrors.value = []
   loadErrors.value = []
+  displayedValidationErrors.value = []
 
   if (!isEditMode.value || !props.id) {
     form.value = createDefaultForm()
@@ -76,10 +78,13 @@ const loadPriority = async (): Promise<void> => {
 
 const handleSubmit = async (): Promise<void> => {
   backendErrors.value = []
+  displayedValidationErrors.value = validationErrors.value
 
   if (validationErrors.value.length > 0) {
     return
   }
+
+  displayedValidationErrors.value = []
 
   isSubmitting.value = true
 
@@ -106,6 +111,14 @@ const handleSubmit = async (): Promise<void> => {
 }
 
 watch(() => props.id, loadPriority, { immediate: true })
+watch(
+  form,
+  () => {
+    backendErrors.value = []
+    displayedValidationErrors.value = []
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -124,8 +137,8 @@ watch(() => props.id, loadPriority, { immediate: true })
     </header>
 
     <BaseAlert
-      v-if="validationErrors.length > 0"
-      :messages="validationErrors"
+      v-if="displayedValidationErrors.length > 0"
+      :messages="displayedValidationErrors"
       title="Validation errors"
     />
 
