@@ -1,0 +1,14 @@
+services:
+  task-manager-vue:
+    build: .
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+    volumes:
+      - task-manager-vue-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  task-manager-vue-data:

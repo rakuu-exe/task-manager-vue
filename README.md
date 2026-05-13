@@ -30,6 +30,16 @@ See on Vue 3 + TypeScript task manager, kus saab hallata kategooriaid, prioritee
    `npm run dev`
 3. Ava Vite aadress, mille terminal kuvab.
 
+### Dockeriga
+1. Ehita ja kaivita konteiner:
+   `docker compose up --build`
+2. Ava brauseris:
+   `http://localhost:3003`
+3. Andmebaas ja JWT saladus hoitakse Docker volume'is `task-manager-vue-data`.
+
+Kui tahad konteineri taustal kaima panna:
+`docker compose up -d --build`
+
 ## Mida siin ehitati
 - Register ja login vaated
 - Logout voog
